@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Web 3D Portfolio — Không gian sáng tạo của Khang, được xây dựng bằng Three.js" />
+  <meta name="theme-color" content="#000000" />
+  <title>Khang — 3D Creative Space</title>
+
+  <!-- Google Fonts: Space Grotesk + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- ====== LOADING SCREEN ====== -->
+  <div id="loading-screen">
+    <div class="loader-content">
+      <div class="loader-title">KHANG</div>
+      <div class="loader-subtitle">Đang mở không gian vũ trụ...</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0%</div>
+    </div>
+  </div>
+
+  <!-- ====== 3D CANVAS (fixed background) ====== -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ====== MOUSE TRAIL CANVAS ====== -->
+  <canvas id="trail-canvas"></canvas>
+
+  <!-- ====== SCROLL CONTAINER ====== -->
+  <div id="scroll-container">
+
+    <!-- ===== SECTION 1: HERO ===== -->
+    <section id="section-hero" class="scroll-section" data-section="0">
+      <div class="section-inner hero-inner">
+        <p class="hero-tag reveal-item">✦ Web 3D Interactive Experience</p>
+        <!-- Particles hình thành chữ "KHANG" ở đây (scroll-driven) -->
+        <div class="hero-particle-space"></div>
+        <p class="hero-subtitle reveal-item">
+          Chào mừng bạn đến không gian sáng tạo 3D của tôi
+        </p>
+        <div class="scroll-hint reveal-item">
+          <span>↓ Cuộn xuống để khám phá thêm</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 2: ABOUT ===== -->
+    <section id="section-about" class="scroll-section" data-section="1">
+      <div class="section-inner section-left">
+        <p class="section-tag reveal-item">✦ Về dự án</p>
+        <h2 class="section-title reveal-item">
+          Không Chỉ Là <span class="highlight">Website</span>
+        </h2>
+        <p class="section-desc reveal-item">
+          Đây là một trải nghiệm tương tác 3D hoàn toàn — mỗi hạt sáng bạn thấy
+          đều được tính toán và render bởi GPU shaders trong thời gian thực.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item reveal-item">
+            <span class="feature-icon">🖱️</span>
+            <span>Di chuyển chuột để điều khiển dải ngân hà</span>
+          </div>
+          <div class="feature-item reveal-item">
+            <span class="feature-icon">💥</span>
+            <span>Click vào bất kỳ đâu để tạo hiệu ứng nổ</span>
+          </div>
+          <div class="feature-item reveal-item">
+            <span class="feature-icon">🔊</span>
+            <span>Bật âm thanh để cảm nhận không gian vũ trụ</span>
+          </div>
+          <div class="feature-item reveal-item">
+            <span class="feature-icon">📱</span>
+            <span>Nghiêng điện thoại để xoay particles (mobile)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 3: TECH STACK ===== -->
+    <section id="section-tech" class="scroll-section" data-section="2">
+      <div class="section-inner">
+        <p class="section-tag reveal-item">✦ Công nghệ</p>
+        <h2 class="section-title reveal-item">
+          Tech <span class="highlight">Stack</span>
+        </h2>
+        <div class="tech-grid">
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">⚡</div>
+            <h3>Three.js</h3>
+            <p>Thư viện 3D hàng đầu cho web browser</p>
+          </div>
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">🎨</div>
+            <h3>GLSL Shaders</h3>
+            <p>Lập trình GPU trực tiếp cho hiệu suất tối đa</p>
+          </div>
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">🎵</div>
+            <h3>Web Audio API</h3>
+            <p>Âm thanh synthesized realtime không cần file</p>
+          </div>
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">🚀</div>
+            <h3>Vite</h3>
+            <p>Build tool siêu nhanh với HMR tức thì</p>
+          </div>
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">✨</div>
+            <h3>Post-Processing</h3>
+            <p>UnrealBloom tạo hiệu ứng glow chuyên nghiệp</p>
+          </div>
+          <div class="tech-card reveal-item">
+            <div class="tech-icon">📐</div>
+            <h3>BufferGeometry</h3>
+            <p>Render 4000+ particles mượt mà 60fps</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 4: FEATURES ===== -->
+    <section id="section-features" class="scroll-section" data-section="3">
+      <div class="section-inner">
+        <p class="section-tag reveal-item">✦ Điểm nổi bật</p>
+        <h2 class="section-title reveal-item">
+          Tính Năng <span class="highlight">Đặc Biệt</span>
+        </h2>
+        <div class="features-row">
+          <div class="feature-card reveal-item" data-theme="nebula">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-emoji">🌌</div>
+              <h3>Galaxy Simulation</h3>
+              <p>4000 particles tạo thành 3 cánh xoắn ốc, xoay và phản hồi theo chuyển động của bạn trong thời gian thực.</p>
+            </div>
+          </div>
+          <div class="feature-card reveal-item" data-theme="aurora">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-emoji">🎵</div>
+              <h3>Sound Design</h3>
+              <p>Ambient drone pad được tổng hợp hoàn toàn bằng Web Audio — oscillators, filters & noise generators.</p>
+            </div>
+          </div>
+          <div class="feature-card reveal-item" data-theme="supernova">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-emoji">📱</div>
+              <h3>Cross-Platform</h3>
+              <p>Tối ưu cho desktop & mobile — tự động giảm particles, hỗ trợ touch & DeviceOrientation API.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Link to Solar System page -->
+        <a href="/solar.html" class="solar-explore-link reveal-item">
+          <div class="solar-link-glow"></div>
+          <div class="solar-link-content">
+            <span class="solar-link-icon">☀️</span>
+            <div class="solar-link-text">
+              <h3>Khám Phá Hệ Mặt Trời</h3>
+              <p>Trải nghiệm mô phỏng 3D realtime — Sun shader, Atmosphere, Asteroid Belt</p>
+            </div>
+            <span class="solar-link-arrow">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 5: FOOTER ===== -->
+    <section id="section-footer" class="scroll-section" data-section="4">
+      <div class="section-inner">
+        <div class="footer-content reveal-item">
+          <h2 class="footer-title">
+            Creative <span class="highlight">Space</span>
+          </h2>
+          <p class="footer-desc">Được tạo bởi Khang — với Three.js + GLSL + ❤️</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="GitHub">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="LinkedIn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Email">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M22 7l-10 7L2 7"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
+
+  <!-- ====== NAVIGATION DOTS ====== -->
+  <nav id="nav-dots">
+    <button class="nav-dot active" data-target="0" aria-label="Hero"></button>
+    <button class="nav-dot" data-target="1" aria-label="About"></button>
+    <button class="nav-dot" data-target="2" aria-label="Tech"></button>
+    <button class="nav-dot" data-target="3" aria-label="Features"></button>
+    <button class="nav-dot" data-target="4" aria-label="Footer"></button>
+  </nav>
+
+  <!-- ====== CONTROLS ====== -->
+  <button id="sound-toggle" class="control-btn sound-btn" aria-label="Toggle sound">
+    <svg id="sound-on-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    </svg>
+    <svg id="sound-off-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+  </button>
+
+  <!-- Theme Switcher -->
+  <button id="theme-toggle" class="control-btn theme-btn" aria-label="Change theme">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  </button>
+
+  <!-- Solar System Navigation -->
+  <a href="/solar.html" class="solar-nav-btn" aria-label="Khám phá Hệ Mặt Trời">
+    <span class="solar-nav-icon">☀️</span>
+    <span class="solar-nav-label">Hệ Mặt Trời</span>
+  </a>
+
+  <!-- Credits -->
+  <div class="credits-badge">
+    <span>Made with ✦ by <strong>Khang</strong></span>
+  </div>
+
+  <!-- ====== ENTRY POINT ====== -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

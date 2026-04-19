@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="3D Solar System — Realtime simulation with GLSL shaders, atmosphere Fresnel, and asteroid belt" />
+  <meta name="theme-color" content="#000000" />
+  <title>Solar System — 3D Interactive</title>
+
+  <!-- Google Fonts: Space Grotesk + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/solar-style.css" />
+</head>
+<body>
+  <!-- ====== LOADING SCREEN ====== -->
+  <div id="loading-screen">
+    <div class="loader-content">
+      <div class="loader-title">☀️</div>
+      <div class="loader-subtitle">Loading the Solar System...</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0%</div>
+    </div>
+  </div>
+
+  <!-- ====== 3D CANVAS (fixed fullscreen) ====== -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ====== OVERLAY UI ====== -->
+  <div id="solar-overlay">
+    <!-- Back button -->
+    <a href="/" class="back-btn" aria-label="Back to home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      <span>Home</span>
+    </a>
+
+    <!-- Title -->
+    <div class="solar-header">
+      <h1 class="solar-title">
+        Solar <span class="highlight">System</span>
+      </h1>
+      <p class="solar-subtitle">Realtime 3D Simulation — GLSL Shaders + Three.js</p>
+    </div>
+
+    <!-- Planet legend bar -->
+    <div class="planet-info-bar">
+      <div class="planet-info-item" data-planet="Sun">
+        <span class="planet-dot" style="background: #ffaa00;"></span>
+        <span>Sun</span>
+      </div>
+      <div class="planet-info-item" data-planet="Mercury">
+        <span class="planet-dot" style="background: #8c7e6d;"></span>
+        <span>Mercury</span>
+      </div>
+      <div class="planet-info-item" data-planet="Venus">
+        <span class="planet-dot" style="background: #e8c275;"></span>
+        <span>Venus</span>
+      </div>
+      <div class="planet-info-item" data-planet="Earth">
+        <span class="planet-dot" style="background: #2b6cb0;"></span>
+        <span>Earth</span>
+      </div>
+      <div class="planet-info-item" data-planet="Mars">
+        <span class="planet-dot" style="background: #c1440e;"></span>
+        <span>Mars</span>
+      </div>
+      <div class="planet-info-item" data-planet="Jupiter">
+        <span class="planet-dot" style="background: #d4a574;"></span>
+        <span>Jupiter</span>
+      </div>
+      <div class="planet-info-item" data-planet="Saturn">
+        <span class="planet-dot" style="background: #ead6b8;"></span>
+        <span>Saturn</span>
+      </div>
+      <div class="planet-info-item" data-planet="Uranus">
+        <span class="planet-dot" style="background: #7ec8e3;"></span>
+        <span>Uranus</span>
+      </div>
+    </div>
+
+    <!-- Controls hint -->
+    <div class="controls-hint">
+      <span>🖱️ Drag to rotate</span>
+      <span>📏 Scroll to zoom</span>
+    </div>
+
+    <!-- Explore Planets button — above planet bar -->
+    <button class="explore-btn" id="explore-btn">
+      <span>Explore Planets</span>
+    </button>
+  </div>
+
+  <!-- ====== PLANET DETAILS OVERLAY PANEL ====== -->
+  <div id="planet-panel-backdrop" class="panel-backdrop hidden"></div>
+  <div id="planet-panel" class="planet-panel hidden">
+    
+    <!-- Close button -->
+    <button class="panel-close" id="panel-close">✕</button>
+
+    <!-- Scrollable content -->
+    <div class="panel-scroll">
+
+      <div class="panel-header">
+        <h2>The Solar System</h2>
+        <p>Scroll down to explore each planet</p>
+      </div>
+
+      <!-- Section: The Sun -->
+      <section class="planet-section" data-planet="sun">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">☀️</span>
+          <h2 class="planet-section-title">The Sun</h2>
+          <p class="planet-section-type">G-type Main-Sequence Star</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">1.39M</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">5,778</span><span class="stat-lbl">°K Surface</span></div>
+            <div class="planet-stat"><span class="stat-num">99.86%</span><span class="stat-lbl">System Mass</span></div>
+            <div class="planet-stat"><span class="stat-num">4.6B</span><span class="stat-lbl">Years Old</span></div>
+          </div>
+          <p class="planet-section-desc">The Sun is the star at the center of our solar system. It's a nearly perfect ball of hot plasma, generating energy through nuclear fusion of hydrogen into helium at its core. Its immense gravity holds the entire solar system together, from the innermost rocky planets to the farthest reaches of the Oort Cloud.</p>
+        </div>
+      </section>
+
+      <!-- Section: Mercury -->
+      <section class="planet-section" data-planet="mercury">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">☿</span>
+          <h2 class="planet-section-title">Mercury</h2>
+          <p class="planet-section-type">Terrestrial Planet • Closest to the Sun</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">4,880</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">88</span><span class="stat-lbl">Days Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">430°C</span><span class="stat-lbl">Day Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">0</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Mercury is the smallest and innermost planet in the solar system. Despite being closest to the Sun, it is not the hottest planet — that title belongs to Venus. Mercury has a heavily cratered surface, similar to Earth's Moon, and experiences extreme temperature swings from 430°C during the day to -180°C at night.</p>
+        </div>
+      </section>
+
+      <!-- Section: Venus -->
+      <section class="planet-section" data-planet="venus">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">♀</span>
+          <h2 class="planet-section-title">Venus</h2>
+          <p class="planet-section-type">Terrestrial Planet • Earth's "Sister"</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">12,104</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">225</span><span class="stat-lbl">Days Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">465°C</span><span class="stat-lbl">Surface Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">0</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Venus is the second planet from the Sun and the hottest in our solar system. Its thick atmosphere of carbon dioxide traps heat in a runaway greenhouse effect. Venus rotates backwards compared to most planets and a day on Venus (243 Earth days) is longer than its year (225 Earth days).</p>
+        </div>
+      </section>
+
+      <!-- Section: Earth -->
+      <section class="planet-section" data-planet="earth">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">🌍</span>
+          <h2 class="planet-section-title">Earth</h2>
+          <p class="planet-section-type">Terrestrial Planet • The Blue Marble</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">12,742</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">365.25</span><span class="stat-lbl">Days Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">15°C</span><span class="stat-lbl">Average Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">1</span><span class="stat-lbl">Moon</span></div>
+          </div>
+          <p class="planet-section-desc">Earth is the third planet from the Sun and the only known celestial body to harbor life. About 71% of its surface is covered in water, giving it the distinctive blue appearance seen from space. Earth's atmosphere, magnetic field, and distance from the Sun create perfect conditions for liquid water and life.</p>
+        </div>
+      </section>
+
+      <!-- Section: Mars -->
+      <section class="planet-section" data-planet="mars">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">♂</span>
+          <h2 class="planet-section-title">Mars</h2>
+          <p class="planet-section-type">Terrestrial Planet • The Red Planet</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">6,779</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">687</span><span class="stat-lbl">Days Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">-65°C</span><span class="stat-lbl">Average Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">2</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Mars is known for its distinctive red color caused by iron oxide on its surface. It hosts Olympus Mons, the tallest volcano in the solar system at 21.9 km, and Valles Marineris, a 4,000 km canyon system. Scientists believe Mars once had liquid water billions of years ago.</p>
+        </div>
+      </section>
+
+      <!-- Section: Jupiter -->
+      <section class="planet-section" data-planet="jupiter">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">♃</span>
+          <h2 class="planet-section-title">Jupiter</h2>
+          <p class="planet-section-type">Gas Giant • King of Planets</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">139,820</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">11.86</span><span class="stat-lbl">Years Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">-110°C</span><span class="stat-lbl">Cloud Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">95</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Jupiter is the largest planet — over 1,300 Earths could fit inside. Its Great Red Spot is a storm raging for 400+ years, larger than Earth. Jupiter's powerful magnetic field and 95 known moons make it like a miniature solar system of its own.</p>
+        </div>
+      </section>
+
+      <!-- Section: Saturn -->
+      <section class="planet-section" data-planet="saturn">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">🪐</span>
+          <h2 class="planet-section-title">Saturn</h2>
+          <p class="planet-section-type">Gas Giant • The Ringed Planet</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">116,460</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">29.46</span><span class="stat-lbl">Years Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">-140°C</span><span class="stat-lbl">Cloud Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">146</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Saturn is famous for its spectacular ring system made of billions of particles of ice and rock. Despite its size, Saturn is the least dense planet — it would float in water. Its moon Titan has a thick atmosphere and lakes of liquid methane.</p>
+        </div>
+      </section>
+
+      <!-- Section: Uranus -->
+      <section class="planet-section" data-planet="uranus">
+        <div class="planet-section-inner">
+          <span class="planet-section-icon">⛢</span>
+          <h2 class="planet-section-title">Uranus</h2>
+          <p class="planet-section-type">Ice Giant • The Tilted Planet</p>
+          <div class="planet-stats-grid">
+            <div class="planet-stat"><span class="stat-num">50,724</span><span class="stat-lbl">km Diameter</span></div>
+            <div class="planet-stat"><span class="stat-num">84</span><span class="stat-lbl">Years Orbit</span></div>
+            <div class="planet-stat"><span class="stat-num">-224°C</span><span class="stat-lbl">Cloud Temp</span></div>
+            <div class="planet-stat"><span class="stat-num">28</span><span class="stat-lbl">Moons</span></div>
+          </div>
+          <p class="planet-section-desc">Uranus rotates on its side with a 98-degree axial tilt, rolling around the Sun. Its blue-green color comes from methane absorbing red light. It was the first planet discovered by telescope, by William Herschel in 1781.</p>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <section class="solar-footer">
+        <p>Built with Three.js + GLSL Shaders</p>
+        <p>Textures by <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener">Solar System Scope</a> (CC BY 4.0)</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Credits -->
+  <div class="credits-badge">
+    <span>Made with ✦ by <strong>Khang</strong></span>
+  </div>
+
+  <!-- ====== ENTRY POINT ====== -->
+  <script type="module" src="/src/solar-main.js"></script>
+</body>
+</html>
