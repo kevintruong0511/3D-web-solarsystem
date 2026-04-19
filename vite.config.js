@@ -22,11 +22,9 @@ export default defineConfig({
     // Giới hạn chunk size warning
     chunkSizeWarningLimit: 600,
     // Minify cho production
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true
-      }
+    minify: 'esbuild',
+    esbuild: {
+      drop: ['console']
     }
   },
   server: {
